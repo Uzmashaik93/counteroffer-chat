@@ -17,6 +17,13 @@ export default function SellerChatUI() {
 
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  const isOfferAccepted = Boolean(
+    messages.find(
+      (message) =>
+        message.type === "counter_offer" && message.status === "accepted"
+    )
+  );
+
   useEffect(() => {
     socket.emit("get_history");
     socket.on("message_history", (history: Message[]) => {
@@ -47,21 +54,6 @@ export default function SellerChatUI() {
     socket.emit("send_message", payload);
 
     setInput("");
-  };
-
-  const sendCounterOffer = (id: string, amount: number) => {
-    const payload = {
-      type: "counter_offer",
-      sender: "seller",
-      amount,
-      status: "pending",
-      timestamp: new Date().toISOString(),
-    };
-    socket.emit("update_counter_offer", {
-      messageId: id,
-      status: "rejected",
-      newMessage: payload,
-    });
   };
 
   return (
@@ -129,11 +121,7 @@ export default function SellerChatUI() {
             const isOwnMessage = msg.sender === "seller";
 
             return msg.type === "counter_offer" ? (
-              <CounterOfferMessageBlock
-                key={idx}
-                message={msg}
-                sendCounterOffer={sendCounterOffer}
-              />
+              <CounterOfferMessageBlock key={idx} message={msg} />
             ) : (
               <TextMessageBlock
                 key={idx}
@@ -146,23 +134,25 @@ export default function SellerChatUI() {
         </div>
 
         {/* Input */}
-        <div className="p-4 border-t border-t-gray-300 bg-white">
-          <div className="flex items-center gap-2">
-            <input
-              type="text"
-              placeholder="Type a message..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              className="flex-1 px-4 py-2 rounded-full text-sm focus:outline-none"
-            />
-            <button
-              onClick={sendMessage}
-              className="bg-black text-white px-4 py-2 text-sm hover:bg-gray-800"
-            >
-              Send
-            </button>
+        {!isOfferAccepted && (
+          <div className="p-4 border-t border-t-gray-300 bg-white">
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                placeholder="Type a message..."
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                className="flex-1 px-4 py-2 rounded-full text-sm focus:outline-none"
+              />
+              <button
+                onClick={sendMessage}
+                className="bg-black text-white px-4 py-2 text-sm hover:bg-gray-800"
+              >
+                Send
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </main>
     </div>
   );

@@ -1,13 +1,12 @@
 import { CounterOffer } from "@/socket-server";
 import React, { useState } from "react";
-import { TimeStamp } from "./TimeStamp";
+import socket from "@/lib/socket";
+import CounterOfferMessageLine from "./CounterOfferMessageLine";
 
 export const CounterOfferMessageBlock = ({
   message,
-  sendCounterOffer,
 }: {
   message: CounterOffer;
-  sendCounterOffer: (messageId: string, amount: number) => void;
 }) => {
   const [showInput, setShowInput] = useState(false);
   const [offerAmount, setOfferAmount] = useState<number>();
@@ -24,38 +23,78 @@ export const CounterOfferMessageBlock = ({
   };
 
   const handleAccept = () => {
-    sendCounterOffer(message.id, message.amount);
+    socket.emit("update_counter_offer", {
+      messageId: message.id,
+      status: "accepted",
+      newMessage: {
+        ...message,
+        status: "accepted",
+        timestamp: new Date().toISOString(),
+        sender: "seller",
+      },
+    });
+  };
+
+  const sendCounterOffer = (id: string, amount: number) => {
+    const payload = {
+      type: "counter_offer",
+      sender: "seller",
+      amount,
+      status: "pending",
+      timestamp: new Date().toISOString(),
+    };
+    socket.emit("update_counter_offer", {
+      messageId: id,
+      status: "rejected",
+      newMessage: payload,
+    });
+  };
+
+  const handleDecline = () => {
+    socket.emit("update_counter_offer", {
+      messageId: message.id,
+      status: "rejected",
+      newMessage: {
+        ...message,
+        status: "rejected",
+        timestamp: new Date().toISOString(),
+        sender: "seller",
+      },
+    });
   };
 
   return (
     <div className="mt-[27px]">
-      {message.status === "accepted" && !isMyMessage ? (
-        <p className="text-center text-green-600 text-sm font-semibold mt-4">
-          Offer accepted at {message.amount} EUR
-        </p>
-      ) : (
-        <>
-          {!showInput &&
-            (message.sender === "buyer" ? (
-              <p className="text-center text-gray-800 text-sm">
-                You received an offer of
-                <span className="font-semibold"> {message.amount} EUR</span> for
-                this item.
-                <span className="text-xs text-gray-500 px-2">
-                  <TimeStamp timestamp={message.timestamp} />
-                </span>
+      {!showInput && (
+        <div>
+          {isMyMessage ? (
+            message.status === "accepted" ? (
+              <p className="text-center text-green-600 text-sm font-semibold mt-4">
+                Offer accepted at {message.amount} EUR by you.
+              </p>
+            ) : message.status === "rejected" ? (
+              <p className="text-center text-red-600 text-sm font-semibold mt-4">
+                Offer declined by you.
               </p>
             ) : (
-              <p className="text-center text-gray-800 text-sm">
-                You sent an offer of
-                <span className="font-semibold"> {message.amount} EUR</span> for
-                this item.
-                <span className="text-xs text-gray-500 px-2">
-                  <TimeStamp timestamp={message.timestamp} />
-                </span>
-              </p>
-            ))}
-        </>
+              <CounterOfferMessageLine
+                amount={message.amount}
+                timestamp={message.timestamp}
+                action={"sent"}
+              />
+            )
+          ) : message.status === "accepted" ? (
+            <p className="text-center text-green-600 text-sm font-semibold mt-4">
+              Offer accepted at {message.amount} EUR by buyer.
+            </p>
+          ) : (
+            <CounterOfferMessageLine
+              amount={message.amount}
+              timestamp={message.timestamp}
+              action={"received"}
+            />
+          )}
+        </div>
       )}
 
       <div className="flex flex-wrap gap-5 justify-center mt-[24px] text-xs">
@@ -74,7 +113,7 @@ export const CounterOfferMessageBlock = ({
               Counter Offer
             </button>
             <button
-              onClick={() => sendCounterOffer(message.id, 0)}
+              onClick={handleDecline}
               className="px-2 py-2 bg-white border border-gray-300 rounded-md shadow text-gray-800 hover:bg-gray-50 transition"
             >
               Decline Offer

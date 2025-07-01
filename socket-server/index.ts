@@ -13,7 +13,7 @@ export interface CounterOffer extends BaseMessage {
     sender: "buyer" | "seller";
     amount: number;
     timestamp: string;
-    status: "pending" | "accepted" | "rejected";
+    status: "pending" | "accepted" | "rejected" | "history";
 }
 
 export interface RegularMessage extends BaseMessage {
@@ -63,7 +63,7 @@ io.on('connection', (socket: Socket) => {
         io.emit('receive_message', messages);
     });
 
-    socket.on('update_counter_offer', ({ messageId, status, newMessage }: UpdateCounterOfferPayload) => {
+    socket.on('update_counter_offer', ({ messageId, newMessage }: UpdateCounterOfferPayload) => {
         const existingMessageIndex = messages.findIndex(
             (msg) => msg.id === messageId && msg.type === 'counter_offer'
         );
@@ -71,7 +71,7 @@ io.on('connection', (socket: Socket) => {
         if (existingMessageIndex !== -1) {
             messages[existingMessageIndex] = {
                 ...messages[existingMessageIndex],
-                status: status,
+                status: "history",
             } as CounterOffer;
         }
 

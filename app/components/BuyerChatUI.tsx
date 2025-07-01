@@ -6,7 +6,8 @@ import socket from "@/lib/socket";
 import { products } from "../products";
 import Image from "next/image";
 import { TextMessageBlock } from "./TextMessageBlock";
-import { TimeStamp } from "./TimeStamp";
+import { OfferBlock } from "./OfferBlock";
+import CounterOfferMessageLine from "./CounterOfferMessageLine";
 
 export default function BuyerChatUI() {
   const [input, setInput] = useState("");
@@ -139,25 +140,37 @@ export default function BuyerChatUI() {
 
               return msg.type === "counter_offer" ? (
                 isOwnMessage ? (
-                  <p key={msg.id} className="text-center text-sm text-gray-800">
-                    You {msg.status === "accepted" ? "accepted" : "sent"} an
-                    offer of
-                    <span className="font-semibold"> {msg.amount} EUR</span> for
-                    this item.
-                    <span className="text-xs text-gray-500 px-2 ">
-                      <TimeStamp timestamp={msg.timestamp} />
-                    </span>
-                  </p>
+                  msg.status === "accepted" ? (
+                    <p className="text-center text-green-600 text-sm font-semibold mt-4">
+                      Offer accepted at {msg.amount} EUR by you.
+                    </p>
+                  ) : (
+                    <CounterOfferMessageLine
+                      key={msg.id}
+                      amount={msg.amount}
+                      timestamp={msg.timestamp}
+                      action={"sent"}
+                    />
+                  )
                 ) : (
                   <div>
-                    <p className="text-center text-sm text-gray-800">
-                      You recieved a counter offer of
-                      <span className="font-semibold"> {msg.amount} EUR </span>
-                      for this item.
-                      <span className="text-xs text-gray-500 px-2 ">
-                        <TimeStamp timestamp={msg.timestamp} />
-                      </span>
-                    </p>
+                    {msg.status === "accepted" ? (
+                      <p className="text-center text-green-600 text-sm font-semibold mt-4">
+                        Offer accepted at {msg.amount} EUR by seller.
+                      </p>
+                    ) : msg.status === "rejected" ? (
+                      <p className="text-center text-red-600 text-sm font-semibold mt-4">
+                        Offer declined by seller.
+                      </p>
+                    ) : (
+                      <CounterOfferMessageLine
+                        key={msg.id}
+                        amount={msg.amount}
+                        timestamp={msg.timestamp}
+                        action="received"
+                      />
+                    )}
+
                     {msg.sender === "seller" && msg.status === "pending" && (
                       <div className="flex gap-2">
                         <button
@@ -204,40 +217,3 @@ export default function BuyerChatUI() {
     </>
   );
 }
-
-const OfferBlock = ({ sendOffer }: { sendOffer: (amount: number) => void }) => {
-  const [showInput, setShowInput] = useState(false);
-  const [offerAmount, setOfferAmount] = useState("");
-
-  return (
-    <div className="mt-[27px]">
-      {!showInput && (
-        <button
-          onClick={() => setShowInput(true)}
-          className="px-4 py-2 bg-white border border-gray-300 rounded-md shadow text-gray-800 hover:bg-gray-50 transition"
-        >
-          Send a new offer
-        </button>
-      )}
-      <div className="flex flex-wrap gap-3 justify-center mt-[24px]">
-        {showInput && (
-          <div className="flex flex-col text-xs">
-            <input
-              type="number"
-              onChange={(e) => setOfferAmount(e.target.value)}
-              value={offerAmount}
-              placeholder="Enter your offer amount"
-              className="px-4 py-2 border border-gray-300 rounded-md shadow text-gray-800 focus:outline-none focus:ring focus:border-blue-300"
-            />
-            <button
-              onClick={() => sendOffer(Number(offerAmount))}
-              className="mt-2 bg-black text-white px-2 py-2 text-xs hover:bg-gray-800"
-            >
-              Submit Offer
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
