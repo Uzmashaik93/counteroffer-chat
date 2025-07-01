@@ -5,7 +5,7 @@ import SellerChatUI from "@/app/components/SellerChatUI";
 export default function SellerChat() {
   return (
     <div>
-      <SellerChatUI sender="seller" />
+      <SellerChatUI />
     </div>
   );
 }

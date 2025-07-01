@@ -18,6 +18,11 @@ export default function SellerChatUI() {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    socket.emit("get_history");
+    socket.on("message_history", (history: Message[]) => {
+      console.log("History received:", history);
+      setMessages(history);
+    });
     socket.on("receive_message", (messages) => {
       console.log(messages);
       setMessages(messages);
@@ -25,6 +30,7 @@ export default function SellerChatUI() {
 
     return () => {
       socket.off("receive_message");
+      socket.off("message_history");
     };
   }, []);
 
@@ -41,6 +47,21 @@ export default function SellerChatUI() {
     socket.emit("send_message", payload);
 
     setInput("");
+  };
+
+  const sendCounterOffer = (id: string, amount: number) => {
+    const payload = {
+      type: "counter_offer",
+      sender: "seller",
+      amount,
+      status: "pending",
+      timestamp: new Date().toISOString(),
+    };
+    socket.emit("update_counter_offer", {
+      messageId: id,
+      status: "rejected",
+      newMessage: payload,
+    });
   };
 
   return (
@@ -108,7 +129,11 @@ export default function SellerChatUI() {
             const isOwnMessage = msg.sender === "seller";
 
             return msg.type === "counter_offer" ? (
-              <CounterOfferMessageBlock key={idx} message={msg} />
+              <CounterOfferMessageBlock
+                key={idx}
+                message={msg}
+                sendCounterOffer={sendCounterOffer}
+              />
             ) : (
               <TextMessageBlock
                 key={idx}
@@ -121,7 +146,7 @@ export default function SellerChatUI() {
         </div>
 
         {/* Input */}
-        <div className="p-4 border-t bg-white">
+        <div className="p-4 border-t border-t-gray-300 bg-white">
           <div className="flex items-center gap-2">
             <input
               type="text"
@@ -132,7 +157,7 @@ export default function SellerChatUI() {
             />
             <button
               onClick={sendMessage}
-              className="bg-blue-500 text-white px-4 py-2 rounded-full text-sm hover:bg-blue-600"
+              className="bg-black text-white px-4 py-2 text-sm hover:bg-gray-800"
             >
               Send
             </button>

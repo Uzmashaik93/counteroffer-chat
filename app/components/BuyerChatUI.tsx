@@ -14,13 +14,30 @@ export default function BuyerChatUI() {
   const [messages, setMessages] = useState<Message[]>([]);
 
   const pendingCounterOffer = messages.find(
-    (msg) => msg.type === "counter_offer" && msg.status === "pending"
+    (msg) =>
+      msg.type === "counter_offer" &&
+      msg.status === "pending" &&
+      msg.sender === "buyer"
+  );
+
+  const pendingCounterOfferBySeller = messages.find(
+    (msg) =>
+      msg.type === "counter_offer" &&
+      msg.status === "pending" &&
+      msg.sender === "seller"
   );
 
   const bottomRef = useRef<HTMLDivElement>(null);
+  const selectedProduct = products[0]; // Assuming we want to chat for the first product
 
-  const selectedProduct = products[0]; // Assuming you want to display the first product
   useEffect(() => {
+    socket.emit("get_history");
+
+    socket.on("message_history", (history: Message[]) => {
+      console.log("History received:", history);
+      setMessages(history);
+    });
+
     socket.on("receive_message", (messages) => {
       console.log(messages);
       setMessages(messages);
@@ -28,6 +45,7 @@ export default function BuyerChatUI() {
 
     return () => {
       socket.off("receive_message");
+      socket.off("message_history");
     };
   }, []);
 
@@ -54,7 +72,20 @@ export default function BuyerChatUI() {
       status: "pending",
       timestamp: new Date().toISOString(),
     };
-    socket.emit("send_message", payload);
+    socket.emit("update_counter_offer", {
+      messageId: pendingCounterOfferBySeller?.id,
+      status: "rejected",
+      newMessage: payload,
+    });
+  };
+
+  const handleAccept = () => {
+    if (pendingCounterOfferBySeller) {
+      socket.emit("update_counter_offer", {
+        messageId: pendingCounterOfferBySeller.id,
+        status: "accepted",
+      });
+    }
   };
 
   return (
@@ -90,7 +121,7 @@ export default function BuyerChatUI() {
             const isOwnMessage = msg.sender === "buyer";
 
             return msg.type === "counter_offer" ? (
-              msg.status === "pending" ? (
+              isOwnMessage ? (
                 <p className="text-center text-sm text-gray-800">
                   You sent an offer of
                   <span className="font-semibold"> {msg.amount} EUR</span> for
@@ -99,7 +130,28 @@ export default function BuyerChatUI() {
                     <TimeStamp timestamp={msg.timestamp} />
                   </span>
                 </p>
-              ) : null
+              ) : (
+                <div>
+                  <p className="text-center text-sm text-gray-800">
+                    You recieved a counter offer of
+                    <span className="font-semibold"> {msg.amount} EUR</span> for
+                    this item.
+                    <span className="text-xs text-gray-500 px-2 ">
+                      <TimeStamp timestamp={msg.timestamp} />
+                    </span>
+                  </p>
+                  {pendingCounterOfferBySeller && (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleAccept}
+                        className="px-2 py-2 bg-white text-sm ml-auto mr-auto border border-gray-300 rounded-md shadow text-gray-800 hover:bg-gray-50 transition"
+                      >
+                        Accept Offer
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )
             ) : (
               <TextMessageBlock
                 key={idx}
@@ -145,7 +197,7 @@ const OfferBlock = ({ sendOffer }: { sendOffer: (amount: number) => void }) => {
           onClick={() => setShowInput(true)}
           className="px-4 py-2 bg-white border border-gray-300 rounded-md shadow text-gray-800 hover:bg-gray-50 transition"
         >
-          Offer
+          Send a new offer
         </button>
       )}
       <div className="flex flex-wrap gap-3 justify-center mt-[24px]">

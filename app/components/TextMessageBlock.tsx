@@ -17,7 +17,7 @@ export const TextMessageBlock = ({
 
       <div
         className={`rounded-xl p-3 text-sm max-w-xs shadow ${
-          isOwnMessage ? "bg-blue-500 text-white" : "bg-white text-gray-900"
+          isOwnMessage ? "bg-white text-black" : "bg-white text-gray-900"
         }`}
       >
         {message.message}
