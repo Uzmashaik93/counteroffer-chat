@@ -7,18 +7,21 @@ export const products = [
     id: 1,
     name: "Vintage Berkin",
     price: 1200,
+    condition: "Used in good condition",
     image: image1,
   },
   {
     id: 2,
     name: "Gucci",
     price: 1500,
+    condition: "Brand new with tags",
     image: image2,
   },
   {
     id: 3,
     name: "Louis Vuitton",
     price: 2000,
+    Condition: "Used in excellent condition",
     image: image3,
   },
 ];

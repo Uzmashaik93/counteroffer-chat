@@ -7,7 +7,7 @@ export interface CounterOffer {
     type: "counter_offer";
     sender: "buyer" | "seller";
     amount: number;
-    timestamp: number;
+    timestamp: string;
     status: "pending" | "accepted" | "rejected";
 }
 
@@ -15,10 +15,10 @@ export interface RegularMessage {
     type: "message";
     sender: "buyer" | "seller";
     message: string;
+    timestamp: string;
 }
 
 export type Message = CounterOffer | RegularMessage;
-
 
 const app = express();
 app.use(cors());
@@ -38,7 +38,10 @@ io.on('connection', (socket: Socket) => {
     socket.on('send_message', (message: Message) => {
         console.log('Message:', message);
         //some actions
-        messages.push(message);
+        messages.push({
+            ...message,
+            timestamp: new Date().toISOString(),
+        });
         io.emit('receive_message', messages);
     });
 
