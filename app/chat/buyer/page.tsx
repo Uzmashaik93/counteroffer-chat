@@ -1,11 +1,11 @@
 "use client";
 
-import ChatUI from "@/app/components/ChatUI";
+import BuyerChatUI from "@/app/components/BuyerChatUI";
 
-export default function SellerChat() {
+export default function BuyerChat() {
   return (
-    <div>
-      <ChatUI sender="buyer" />
+    <div className="">
+      <BuyerChatUI />
     </div>
   );
 }
