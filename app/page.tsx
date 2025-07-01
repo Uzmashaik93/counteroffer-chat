@@ -1,10 +1,8 @@
 import Link from "next/link";
-import Navbar from "./components/Navbar";
 
 export default function Home() {
   return (
     <div>
-      <Navbar />
       <div className="flex flex-row ml-2 mt-10 gap-4">
         <Link
           href="/chat/buyer"
