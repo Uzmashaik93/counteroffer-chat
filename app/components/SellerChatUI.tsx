@@ -153,7 +153,7 @@ export default function SellerChatUI() {
               placeholder="Type a message..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              className="flex-1 px-4 py-2 border rounded-full text-sm focus:outline-none focus:ring focus:border-blue-300"
+              className="flex-1 px-4 py-2 rounded-full text-sm focus:outline-none"
             />
             <button
               onClick={sendMessage}

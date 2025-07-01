@@ -86,6 +86,12 @@ io.on('connection', (socket: Socket) => {
         io.emit('receive_message', messages);
     });
 
+    socket.on("clear_history", () => {
+        console.log("Clearing message history");
+        messages.length = 0; // Clear the messages array
+        io.emit('message_history', messages); // Emit the cleared history
+    })
+
     socket.on('disconnect', () => {
         console.log(`User disconnected: ${socket.id}`);
     });
