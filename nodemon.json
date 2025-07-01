@@ -1,0 +1,5 @@
+{
+  "watch": ["api/socket-server"],
+  "ext": "ts",
+  "exec": "ts-node api/socket-server/index.ts"
+}
