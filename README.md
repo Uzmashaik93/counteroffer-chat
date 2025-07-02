@@ -63,9 +63,35 @@ git clone https://github.com/your-username/nextjs-role-auth-prototype.git
 cd nextjs-role-auth-prototype
 ```
 
-### 2. npm install
+### 2. Install dependencies
 
-### 3. npm run dev
+```bash
+npm install
+```
+
+### 3. Build the Socket.IO server
+
+```bash
+npm run build:socket
+```
+
+### 4. Start the Socket.IO server (in a separate terminal)
+
+```bash
+npm run start:socket
+```
+
+### 5. Start the Next.js frontend
+
+```bash
+npm run dev
+```
+
+---
+
+- The **Next.js frontend** will be available at [http://localhost:3000](http://localhost:3000)
+- The **Socket.IO backend** will run on the port you specify in your `socket-server/index.ts` (commonly `4000` or similar).
+
 
 ##  License
 This project is for demo and prototype purposes only.
