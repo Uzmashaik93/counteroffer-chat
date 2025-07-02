@@ -17,14 +17,12 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
 
-    const token = signToken({ username: user.username, role: user.role });
+    const token = await signToken({ username: user.username, role: user.role });
 
-    const res = NextResponse.json({ role: user.role });
+    const res = NextResponse.json({ token });
     res.cookies.set('token', token, {
         httpOnly: true,
         path: '/',
-        maxAge: 60 * 60,
     });
-
     return res;
 }

@@ -1,12 +1,12 @@
 "use client";
 
+import { verifyToken } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [token, setToken] = useState("");
 
   const router = useRouter();
 
@@ -16,6 +16,7 @@ const LoginPage = () => {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify({
         username,
         password,
@@ -25,13 +26,11 @@ const LoginPage = () => {
     const data = await res.json();
 
     if (res.ok) {
-      if (data.role === "buyer") {
-        router.push("/chat/buyer");
-      } else if (data.role === "seller") {
-        router.push("/chat/seller");
-      }
+      const userPayload = await verifyToken(data.token);
+      if (userPayload?.role === "buyer") router.push("/chat/buyer");
+      else if (userPayload?.role === "seller") router.push("/chat/seller");
     } else {
-      alert("Login Falied" + data.message);
+      alert(data.message);
     }
   };
 
@@ -79,13 +78,13 @@ const LoginPage = () => {
           >
             Sign In
           </button>
-          {token && (
+          {/* {token && (
             <div>
               <p>Token: {token}</p>
               <a href="/chat/buyer">Go to Buyer Dashboard</a>
               <a href="/chat/seller">Go to Seller Dashboard</a>
             </div>
-          )}
+          )} */}
         </form>
       </div>
     </div>

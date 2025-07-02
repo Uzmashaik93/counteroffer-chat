@@ -32,6 +32,13 @@ export default function BuyerChatUI() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const selectedProduct = products[0]; // Assuming we want to chat for the first product
 
+  const isOfferAccepted = Boolean(
+    messages.find(
+      (message) =>
+        message.type === "counter_offer" && message.status === "accepted"
+    )
+  );
+
   useEffect(() => {
     socket.emit("get_history");
 
@@ -199,23 +206,25 @@ export default function BuyerChatUI() {
           </div>
 
           {/* Input */}
-          <div className="p-2 md:p-4 border-t border-t-gray-300 bg-white">
-            <div className="flex flex-col md:flex-row items-center gap-2">
-              <input
-                type="text"
-                placeholder="Type a message..."
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                className="flex-1 px-4 py-2 rounded-full text-sm focus:outline-none w-full"
-              />
-              <button
-                onClick={sendMessage}
-                className="bg-black text-white px-4 py-2 text-sm hover:bg-gray-800 w-full md:w-auto"
-              >
-                Send
-              </button>
+          {!isOfferAccepted && (
+            <div className="p-2 md:p-4 border-t border-t-gray-300 bg-white">
+              <div className="flex flex-col md:flex-row items-center gap-2">
+                <input
+                  type="text"
+                  placeholder="Type a message..."
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  className="flex-1 px-4 py-2 rounded-full text-sm focus:outline-none w-full"
+                />
+                <button
+                  onClick={sendMessage}
+                  className="bg-black text-white px-4 py-2 text-sm hover:bg-gray-800 w-full md:w-auto"
+                >
+                  Send
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </main>
       </div>
     </div>

@@ -5,9 +5,7 @@ export const TimeStamp = ({ timestamp }: { timestamp: string }) => {
 
   useEffect(() => {
     const getTimeAgo = (date: Date): string => {
-      const seconds = Math.floor(
-        (new Date().getTime() - date.getTime()) / 1000
-      );
+      const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
       const intervals: [string, number][] = [
         ["year", 31536000],
         ["month", 2592000],
@@ -27,8 +25,19 @@ export const TimeStamp = ({ timestamp }: { timestamp: string }) => {
       return "just now";
     };
 
-    const date = new Date(timestamp);
-    setTimeAgo(getTimeAgo(date));
+    const update = () => {
+      const date = new Date(timestamp);
+      if (isNaN(date.getTime())) {
+        setTimeAgo("Invalid date");
+      } else {
+        setTimeAgo(getTimeAgo(date));
+      }
+    };
+
+    update();
+    const interval = setInterval(update, 60000); // update every minute
+    return () => clearInterval(interval);
   }, [timestamp]);
+
   return <span className="text-xs text-gray-500">{timeAgo}</span>;
 };
