@@ -8,6 +8,7 @@ import Image from "next/image";
 import { TextMessageBlock } from "./TextMessageBlock";
 import { OfferBlock } from "./OfferBlock";
 import CounterOfferMessageLine from "./CounterOfferMessageLine";
+import LogoutButton from "./LogoutButton";
 
 export default function BuyerChatUI() {
   const [input, setInput] = useState("");
@@ -107,6 +108,7 @@ export default function BuyerChatUI() {
       >
         Reset the chat
       </button>
+      <LogoutButton />
       <div className="w-full max-w-2xl flex bg-gray-100 h-[90vh] mx-auto border border-gray-300 shadow-lg my-4 rounded-lg md:w-1/2">
         {/* Chat Window */}
         <main className="flex-1 flex flex-col">
@@ -155,7 +157,7 @@ export default function BuyerChatUI() {
                     />
                   )
                 ) : (
-                  <div>
+                  <div key={idx}>
                     {msg.status === "accepted" ? (
                       <p className="text-center text-green-600 text-sm font-semibold mt-4">
                         Offer accepted at {msg.amount} EUR by seller.

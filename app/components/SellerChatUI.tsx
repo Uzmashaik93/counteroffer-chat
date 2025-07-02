@@ -7,6 +7,7 @@ import { products } from "../products";
 import Image from "next/image";
 import { CounterOfferMessageBlock } from "./CounterOffer";
 import { TextMessageBlock } from "./TextMessageBlock";
+import LogoutButton from "./LogoutButton";
 
 export default function SellerChatUI() {
   const [input, setInput] = useState("");
@@ -89,6 +90,7 @@ export default function SellerChatUI() {
               </div>
             </li>
           ))}
+          <LogoutButton />
         </ul>
       </aside>
 
