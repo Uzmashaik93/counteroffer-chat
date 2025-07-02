@@ -1,37 +1,59 @@
-# 🔐 Next.js 15 Role-Based Auth Prototype (Buyer/Seller)
+# Simple chat functionality with authentication on NextJS
 
-This is a simple prototype demonstrating **role-based authentication** in **Next.js 15 (App Router)** using:
-
-- ✅ JWTs stored in `localStorage`
-- ✅ Role-based redirection (buyer vs seller)
-- ✅ Client-side route protection
-- ✅ Login and logout functionality
+A simple prototype to demonstrate a real-time buyer-seller counter-offer chat feature built using **Next.js** (frontend) and **Socket.IO** (backend).  
+Frontend is hosted on **Vercel** and the backend Socket.IO server is hosted on **Render**.
 
 ---
 
 ## ✨ Features
 
-- Hardcoded users:
-  - `buyer1 / pass123`
-  - `seller1 / pass456`
-- JWT token is generated on login and stored in `localStorage`
-- Authenticated routes:
-  - `/chat/buyer` → accessible only to buyers
-  - `/chat/seller` → accessible only to sellers
-- Redirects unauthenticated or unauthorized users
-- Clean separation of auth logic, components, and pages
+- Real-time messaging between buyer and seller
+- Socket.IO for bidirectional communication
+- TypeScript support
+- Simple offer status tracking (`pending`, `accepted`, `rejected`)
+- Production-ready with CORS, deployment, and `.env` setup
 
 ---
 
-## 🧱 Stack
+## 📁 Tech Stack
 
-- [Next.js 15 (App Router)](https://nextjs.org/docs/app)
-- TypeScript
-- JWT (in-memory/localStorage)
-- No database — hardcoded credentials
+| Tech       | Description                         |
+|------------|-------------------------------------|
+| Next.js    | Frontend framework                  |
+| React      | UI library                          |
+| Socket.IO  | Real-time WebSocket communication   |
+| Express    | Lightweight backend for Socket.IO   |
+| TypeScript | Static typing                       |
+| Vercel     | Frontend hosting                    |
+| Render     | Backend Socket.IO hosting           |
 
 ---
 
+## 🧑‍💻 Project Structure
+
+```bash
+├── app/
+│   ├── api/
+│   │   └── auth/
+│   │       └── logout/
+│   │           └── route.ts
+│   │       └── login/
+│   │           └── route.ts
+│   ├── components/
+│   └── login/
+│       └── page.tsx
+│   └── chat/
+│       ├── buyer/
+│       │   └── page.tsx
+│       └── seller/
+│           └── page.tsx
+├── lib/
+│   ├── auth.ts
+│   └── socket.ts
+├── socket-server/
+│   ├── index.ts
+├── middleware.ts
+```
 ## 🚀 Getting Started
 
 ### 1. Clone this repo
