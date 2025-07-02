@@ -100,41 +100,43 @@ export default function BuyerChatUI() {
   };
 
   return (
-    <>
+    <div className="m-5">
       <button
         onClick={handleClearHistory}
-        className="px-2 py-2 bg-white border border-gray-300 rounded-md shadow text-gray-800 hover:bg-gray-50 transition"
+        className=" px-2 py-2 bg-white border border-gray-300 rounded-md shadow text-gray-800 hover:bg-gray-50 transition mb-2 ml-2"
       >
         Reset the chat
       </button>
-      <div className="w-1/2 flex bg-gray-100 h-[90vh] ml-auto mr-auto border border-gray-300 shadow-lg my-4">
+      <div className="w-full max-w-2xl flex bg-gray-100 h-[90vh] mx-auto border border-gray-300 shadow-lg my-4 rounded-lg md:w-1/2">
         {/* Chat Window */}
-        <main className="flex-1 flex flex-col ">
+        <main className="flex-1 flex flex-col">
           {/* Header */}
-          <div className="h-auto flex-wrap bg-white border-b border-b-gray-300 px-4 flex items-center">
+          <div className="flex flex-col md:flex-row flex-wrap bg-white border-b border-b-gray-300 px-4 py-2 items-center gap-4">
             <Image
               src={selectedProduct.image}
               alt={selectedProduct.name}
-              width={200}
-              height={200}
-              className="rounded-md"
+              width={120}
+              height={120}
+              className="rounded-md object-cover"
             />
-            <div className="flex flex-col justify-center gap-2">
-              <div className=" text-sm font-bold">{selectedProduct.name}</div>
-              <div className="text-xs text-black font-bold">
+            <div className="flex flex-col justify-center gap-2 flex-1">
+              <div className="text-base md:text-sm font-bold">
+                {selectedProduct.name}
+              </div>
+              <div className="text-sm md:text-xs text-black font-bold">
                 EUR {selectedProduct.price}
               </div>
               <div className="text-xs text-gray-500">
                 {selectedProduct.condition}
               </div>
             </div>
-            <div className="ml-auto mr-auto mb-2">
+            <div className="w-full md:w-auto flex justify-center md:ml-auto md:mr-auto mb-2">
               {!pendingCounterOffer && <OfferBlock sendOffer={sendOffer} />}
             </div>
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div className="flex-1 overflow-y-auto p-2 md:p-4 space-y-4">
             {messages.map((msg, idx) => {
               const isOwnMessage = msg.sender === "buyer";
 
@@ -195,18 +197,18 @@ export default function BuyerChatUI() {
           </div>
 
           {/* Input */}
-          <div className="p-4 border-t border-t-gray-300 bg-white">
-            <div className="flex items-center gap-2">
+          <div className="p-2 md:p-4 border-t border-t-gray-300 bg-white">
+            <div className="flex flex-col md:flex-row items-center gap-2">
               <input
                 type="text"
                 placeholder="Type a message..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                className="flex-1 px-4 py-2 rounded-full text-sm focus:outline-none "
+                className="flex-1 px-4 py-2 rounded-full text-sm focus:outline-none w-full"
               />
               <button
                 onClick={sendMessage}
-                className="bg-black text-white px-4 py-2 text-sm hover:bg-gray-800"
+                className="bg-black text-white px-4 py-2 text-sm hover:bg-gray-800 w-full md:w-auto"
               >
                 Send
               </button>
@@ -214,6 +216,6 @@ export default function BuyerChatUI() {
           </div>
         </main>
       </div>
-    </>
+    </div>
   );
 }
