@@ -207,7 +207,13 @@ export default function BuyerChatUI() {
 
           {/* Input */}
           {!isOfferAccepted && (
-            <div className="p-2 md:p-4 border-t border-t-gray-300 bg-white">
+            <form
+              className="p-2 md:p-4 border-t border-t-gray-300 bg-white"
+              onSubmit={(e) => {
+                e.preventDefault();
+                sendMessage();
+              }}
+            >
               <div className="flex flex-col md:flex-row items-center gap-2">
                 <input
                   type="text"
@@ -217,13 +223,13 @@ export default function BuyerChatUI() {
                   className="flex-1 px-4 py-2 rounded-full text-sm focus:outline-none w-full"
                 />
                 <button
-                  onClick={sendMessage}
+                  type="submit"
                   className="bg-black text-white px-4 py-2 text-sm hover:bg-gray-800 w-full md:w-auto"
                 >
                   Send
                 </button>
               </div>
-            </div>
+            </form>
           )}
         </main>
       </div>

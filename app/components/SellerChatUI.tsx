@@ -137,23 +137,31 @@ export default function SellerChatUI() {
 
         {/* Input */}
         {!isOfferAccepted && (
-          <div className="p-2 sm:p-4 border-t border-gray-300 bg-white">
-            <div className="flex flex-col sm:flex-row items-center gap-2">
-              <input
-                type="text"
-                placeholder="Type a message..."
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                className="flex-1 px-4 py-2 rounded-full text-sm focus:outline-none w-full"
-              />
-              <button
-                onClick={sendMessage}
-                className="bg-black text-white px-4 py-2 text-sm hover:bg-gray-800 w-full sm:w-auto"
-              >
-                Send
-              </button>
+          <form
+            className="p-2 md:p-4 border-t border-t-gray-300 bg-white"
+            onSubmit={(e) => {
+              e.preventDefault();
+              sendMessage();
+            }}
+          >
+            <div className="p-2 sm:p-4 border-t border-gray-300 bg-white">
+              <div className="flex flex-col sm:flex-row items-center gap-2">
+                <input
+                  type="text"
+                  placeholder="Type a message..."
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  className="flex-1 px-4 py-2 rounded-full text-sm focus:outline-none w-full"
+                />
+                <button
+                  onClick={sendMessage}
+                  className="bg-black text-white px-4 py-2 text-sm hover:bg-gray-800 w-full sm:w-auto"
+                >
+                  Send
+                </button>
+              </div>
             </div>
-          </div>
+          </form>
         )}
       </main>
     </div>
