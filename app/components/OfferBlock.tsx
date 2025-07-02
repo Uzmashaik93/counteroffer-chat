@@ -5,21 +5,21 @@ export const OfferBlock = ({
 }: {
   sendOffer: (amount: number) => void;
 }) => {
-  const [showInput, setShowInput] = useState(false);
+  const [showOfferInput, setShowOfferInput] = useState(false);
   const [offerAmount, setOfferAmount] = useState("");
 
   return (
     <div className="mt-[27px]">
-      {!showInput && (
+      {!showOfferInput && (
         <button
-          onClick={() => setShowInput(true)}
+          onClick={() => setShowOfferInput(true)}
           className="px-4 py-2 bg-white border border-gray-300 rounded-md shadow text-gray-800 hover:bg-gray-50 transition"
         >
           Send a new offer
         </button>
       )}
       <div className="flex flex-wrap gap-3 justify-center mt-[24px]">
-        {showInput && (
+        {showOfferInput && (
           <div className="flex flex-col text-xs">
             <input
               type="number"

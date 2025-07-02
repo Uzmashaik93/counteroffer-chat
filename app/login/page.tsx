@@ -11,7 +11,7 @@ const LoginPage = () => {
   const router = useRouter();
 
   const login = async () => {
-    const res = await fetch("/api/auth", {
+    const res = await fetch("/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -8,13 +8,14 @@ export const CounterOfferMessageBlock = ({
 }: {
   message: CounterOffer;
 }) => {
-  const [showInput, setShowInput] = useState(false);
+  const [showCounterOfferInputBlock, setShowCounterOfferInputBlock] =
+    useState(false);
 
   const isMyMessage = message.sender === "seller";
 
   return (
     <div className="mt-[27px]">
-      {!showInput && (
+      {!showCounterOfferInputBlock && (
         <div>
           {isMyMessage ? (
             message.status === "accepted" ? (
@@ -48,8 +49,8 @@ export const CounterOfferMessageBlock = ({
 
       <CounterOfferButtons
         message={message}
-        showInput={showInput}
-        setShowInput={setShowInput}
+        showCounterOfferInputBlock={showCounterOfferInputBlock}
+        setShowCounterOfferInputBlock={setShowCounterOfferInputBlock}
       />
     </div>
   );
