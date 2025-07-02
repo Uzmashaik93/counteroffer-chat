@@ -154,7 +154,7 @@ export default function SellerChatUI() {
                   className="flex-1 px-4 py-2 rounded-full text-sm focus:outline-none w-full"
                 />
                 <button
-                  onClick={sendMessage}
+                  type="submit"
                   className="bg-black text-white px-4 py-2 text-sm hover:bg-gray-800 w-full sm:w-auto"
                 >
                   Send
