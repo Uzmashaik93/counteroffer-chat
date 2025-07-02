@@ -21,6 +21,14 @@ export default function Home() {
         >
           Seller Chat
         </Link>
+        <Link
+          href="/login"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:bg-gray-800 bg-black text-white px-2 py-2"
+        >
+          Login
+        </Link>
       </div>
     </div>
   );
