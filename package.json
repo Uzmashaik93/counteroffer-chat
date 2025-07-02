@@ -6,8 +6,9 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "start:socket": "ts-node socket-server/index.ts",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build:socket": "tsc -p tsconfig.socket.json",
+    "start:socket": "node dist-socket/index.js"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
