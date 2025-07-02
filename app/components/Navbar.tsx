@@ -28,11 +28,6 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Center: CTA (hidden on mobile) */}
-        <button className="hidden md:block text-sm px-4 py-2 bg-black text-white hover:bg-gray-800">
-          Sell with us
-        </button>
-
         {/* Hamburger for mobile */}
         <button
           className="md:hidden pr-4"
