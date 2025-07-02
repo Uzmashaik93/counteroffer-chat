@@ -32,7 +32,9 @@ export interface UpdateCounterOfferPayload {
 }
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: ["http://localhost:3000"]
+}));
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
@@ -97,7 +99,7 @@ io.on('connection', (socket: Socket) => {
     });
 });
 
-const PORT = 4000;
+const PORT = process.env.PORT || "4000";
 server.listen(PORT, () => {
     console.log(`Socket.IO server running at http://localhost:${PORT}`);
 });
