@@ -3,6 +3,9 @@ import http from 'http';
 import { Server, Socket } from 'socket.io';
 import cors from 'cors';
 import { nanoid } from 'nanoid';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export interface BaseMessage {
     id: string;
@@ -33,7 +36,7 @@ export interface UpdateCounterOfferPayload {
 
 const app = express();
 app.use(cors({
-    origin: ["http://localhost:3000"]
+    origin: [process.env.FRONTEND_URL!]
 }));
 const server = http.createServer(app);
 const io = new Server(server, {
