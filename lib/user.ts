@@ -1,7 +1,12 @@
 export const setUserId = (id: string) => {
-    localStorage.setItem('userId', id)
-}
+    if (typeof window !== 'undefined') {
+        localStorage.setItem('userId', id);
+    }
+};
 
-export const getUserId = () => {
-    return localStorage.getItem('userId') || '';
-}
+export const getUserId = (): string => {
+    if (typeof window !== 'undefined') {
+        return localStorage.getItem('userId') || '';
+    }
+    return '';
+};
