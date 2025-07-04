@@ -19,20 +19,39 @@ export interface CounterOffer extends BaseMessage {
     status: "pending" | "accepted" | "rejected" | "history";
 }
 
-export interface RegularMessage extends BaseMessage {
+export interface Message extends BaseMessage {
     type: "message";
     sender: "buyer" | "seller";
     message: string;
     timestamp: string;
 }
 
-export type Message = CounterOffer | RegularMessage;
 
-export interface UpdateCounterOfferPayload {
+export interface UpdateOfferEvent extends BaseEvent {
+    offer?: Omit<CounterOffer, 'id'>;
     messageId: string;
-    status: "accepted" | "rejected";
-    newMessage?: CounterOffer;
+    status: "pending" | "accepted" | "rejected" | "history";
 }
+
+export interface Chat {
+    id: string;
+    buyerId: string;
+    sellerId: string;
+    messages: Message[];
+    counterOffers: CounterOffer[];
+}
+
+export interface BaseEvent {
+    sellerId: string;
+    buyerId: string;
+}
+
+export interface SendMessageEvent extends BaseEvent {
+    message: Omit<Message, 'id'>
+}
+
+
+const chats: Chat[] = [];
 
 const app = express();
 app.use(cors({
@@ -46,56 +65,82 @@ const io = new Server(server, {
     },
 });
 
-const messages: Message[] = [];
 
 io.on('connection', (socket: Socket) => {
     console.log(`User connected: ${socket.id}`);
 
+    socket.on('chat_start', ({ sellerId, buyerId }: BaseEvent) => {
+        console.log('chat_start')
+        const isChatExist = chats.find((chat) => {
+            return chat.sellerId === sellerId && chat.buyerId === buyerId
+        })
 
-    socket.on('get_history', () => {
-        console.log('History requested');
-        // Emit the entire message history to the client
-        socket.emit('message_history', messages);
+        if (!isChatExist) {
+            const newChat: Chat = {
+                id: nanoid(),
+                sellerId,
+                buyerId,
+                counterOffers: [],
+                messages: []
+            }
+            chats.push(newChat)
+        }
+        console.log('chat', chats)
     })
 
-    socket.on('send_message', (message: Message) => {
+    socket.on('get_history', ({ sellerId, buyerId }: BaseEvent) => {
+        console.log(sellerId, buyerId)
+        const chat = chats.find((chat) => {
+            return chat.sellerId === sellerId && chat.buyerId === buyerId
+        })
+        console.dir('History requested');
+        // Emit the entire message history to the client
+        socket.emit('message_history', chat);
+    })
+
+    socket.on('send_message', ({ sellerId, buyerId, message }: SendMessageEvent) => {
+        console.log('send_message')
+        const chat = chats.find((chat) => {
+            return chat.sellerId === sellerId && chat.buyerId === buyerId
+        })
         console.log('Message:', message);
-        messages.push({
+        chat?.messages.push({
             ...message,
             timestamp: new Date().toISOString(),
             id: nanoid()
         });
-        io.emit('receive_message', messages);
+        console.log(chat)
+        io.emit('receive_message', chat);
     });
 
-    socket.on('update_counter_offer', ({ messageId, newMessage }: UpdateCounterOfferPayload) => {
-        const existingMessageIndex = messages.findIndex(
-            (msg) => msg.id === messageId && msg.type === 'counter_offer'
-        );
+    socket.on(
+        'update_counter_offer',
+        ({ sellerId, buyerId, offer, messageId, status }: UpdateOfferEvent) => {
+            console.log('update_counter_offer');
 
-        if (existingMessageIndex !== -1) {
-            messages[existingMessageIndex] = {
-                ...messages[existingMessageIndex],
-                status: "history",
-            } as CounterOffer;
+            const chat = chats.find(
+                (chat) => chat.sellerId === sellerId && chat.buyerId === buyerId
+            );
+
+            if (chat) {
+                // Update status of the specific counter offer by messageId
+                chat.counterOffers = chat.counterOffers.map((o) =>
+                    o.id === messageId ? { ...o, status } : { ...o, status: "history" }
+                );
+
+                // Add new offer only if 'offer' exists
+                if (offer) {
+                    chat.counterOffers.push({
+                        ...offer,
+                        timestamp: new Date().toISOString(),
+                        id: nanoid(),
+                    });
+                }
+
+                io.emit('receive_message', chat);
+            }
         }
-
-        if (newMessage) {
-            messages.push({
-                ...newMessage,
-                timestamp: new Date().toISOString(),
-                id: nanoid()
-            });
-        }
-
-        io.emit('receive_message', messages);
-    });
-
-    socket.on("clear_history", () => {
-        console.log("Clearing message history");
-        messages.length = 0; // Clear the messages array
-        io.emit('message_history', messages); // Emit the cleared history
-    })
+    );
 
     socket.on('disconnect', () => {
         console.log(`User disconnected: ${socket.id}`);

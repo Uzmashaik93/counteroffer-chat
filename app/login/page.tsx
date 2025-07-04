@@ -27,6 +27,7 @@ const LoginPage = () => {
 
     if (res.ok) {
       const userPayload = await verifyToken(data.token);
+      localStorage.setItem("userId", userPayload?.id ?? "");
       if (userPayload?.role === "buyer") router.push("/chat/buyer");
       else if (userPayload?.role === "seller") router.push("/chat/seller");
     } else {

@@ -5,8 +5,12 @@ import CounterOfferButtons from "./CounterOfferButtons";
 
 export const CounterOfferMessageBlock = ({
   message,
+  sellerId,
+  buyerId,
 }: {
   message: CounterOffer;
+  sellerId: string;
+  buyerId: string;
 }) => {
   const [showCounterOfferInputBlock, setShowCounterOfferInputBlock] =
     useState(false);
@@ -51,6 +55,8 @@ export const CounterOfferMessageBlock = ({
         message={message}
         showCounterOfferInputBlock={showCounterOfferInputBlock}
         setShowCounterOfferInputBlock={setShowCounterOfferInputBlock}
+        sellerId={sellerId}
+        buyerId={buyerId}
       />
     </div>
   );

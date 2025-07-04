@@ -6,6 +6,7 @@ export default function LogoutButton() {
   const router = useRouter();
 
   const logout = async () => {
+    localStorage.removeItem("userId");
     await fetch("/api/auth/logout", { method: "POST" });
     router.push("/");
   };

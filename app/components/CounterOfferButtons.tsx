@@ -1,8 +1,10 @@
-import { CounterOffer } from "@/socket-server";
+import { CounterOffer, UpdateOfferEvent } from "@/socket-server";
 import React, { useState } from "react";
 import socket from "@/lib/socket";
 
 interface CounterOfferButtonsProps {
+  sellerId: string;
+  buyerId: string;
   message: CounterOffer;
   showCounterOfferInputBlock: boolean;
   setShowCounterOfferInputBlock: React.Dispatch<React.SetStateAction<boolean>>;
@@ -12,6 +14,8 @@ const CounterOfferButtons = ({
   message,
   showCounterOfferInputBlock,
   setShowCounterOfferInputBlock,
+  buyerId,
+  sellerId,
 }: CounterOfferButtonsProps) => {
   const [offerAmount, setOfferAmount] = useState<number>();
 
@@ -25,44 +29,52 @@ const CounterOfferButtons = ({
   };
 
   const handleAccept = () => {
-    socket.emit("update_counter_offer", {
+    const payload: UpdateOfferEvent = {
       messageId: message.id,
-      status: "accepted",
-      newMessage: {
+      sellerId,
+      buyerId,
+      status: "history",
+      offer: {
         ...message,
         status: "accepted",
         timestamp: new Date().toISOString(),
         sender: "seller",
       },
-    });
+    };
+    socket.emit("update_counter_offer", payload);
   };
 
   const handleDecline = () => {
-    socket.emit("update_counter_offer", {
+    const payload: UpdateOfferEvent = {
       messageId: message.id,
-      status: "rejected",
-      newMessage: {
+      status: "history",
+      sellerId,
+      buyerId,
+      offer: {
         ...message,
         status: "rejected",
         timestamp: new Date().toISOString(),
         sender: "seller",
       },
-    });
+    };
+    socket.emit("update_counter_offer", payload);
   };
 
   const sendCounterOffer = (id: string, amount: number) => {
-    const payload = {
-      type: "counter_offer",
-      sender: "seller",
-      amount,
-      status: "pending",
-      timestamp: new Date().toISOString(),
-    };
-    socket.emit("update_counter_offer", {
+    const payload: UpdateOfferEvent = {
+      buyerId,
+      sellerId,
       messageId: id,
-      status: "rejected",
-      newMessage: payload,
-    });
+      status: "history",
+      offer: {
+        type: "counter_offer",
+        sender: "seller",
+        amount,
+        status: "pending",
+        timestamp: new Date().toISOString(),
+      },
+    };
+    socket.emit("update_counter_offer", payload);
   };
 
   return (

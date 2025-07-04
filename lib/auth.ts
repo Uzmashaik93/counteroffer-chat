@@ -5,6 +5,7 @@ const SECRET = new TextEncoder().encode('your-secret-key'); // Use env var in pr
 export interface UserPayload extends JWTPayload {
     username: string;
     role: 'buyer' | 'seller';
+    id: string;
 }
 
 export async function signToken(user: UserPayload) {

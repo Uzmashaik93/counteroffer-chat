@@ -15,9 +15,13 @@ import {
 import Image from "next/image";
 import { useState } from "react";
 import logo from "@/public/images/trendies.svg";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const pathname = usePathname();
+  console.log(pathname);
 
   return (
     <div className="w-full text-sm">
@@ -33,8 +37,20 @@ export default function Navbar() {
         </button>
 
         {/* Logo */}
-        <div className="flex-1 flex justify-center md:justify-start">
-          <Image width={177} height={52} src={logo} alt="logo" />
+        <div className="flex-1 flex justify-left ml-3 md:justify-start gap-3">
+          <div>
+            <Image
+              src={logo}
+              alt="logo"
+              width={132.75}
+              height={39}
+              className="md:w-[177px] md:h-[52px] w-[132.75px] h-[39px]"
+              priority
+            />
+          </div>
+          <div className="mt-auto text-lg font-semibold">
+            {pathname.startsWith("/chat/seller") && <p className="">SELLER</p>}
+          </div>
         </div>
 
         {/* Right: Icons (mobile) */}
@@ -45,7 +61,7 @@ export default function Navbar() {
         </div>
 
         {/* Center: Become a Seller (desktop only) */}
-        <div className="hidden md:flex justify-center ml-[40vw] flex-1">
+        <div className="hidden md:flex justify-center ml-[18vw] flex-1">
           <button className="bg-black text-white px-4 py-2 hover:bg-gray-800">
             Become a Seller
           </button>
@@ -73,7 +89,7 @@ export default function Navbar() {
             <User strokeWidth={2} size={20} />
           </span>
           <span>
-            <LogOut strokeWidth={2} size={20} />
+            <LogOut strokeWidth={2} size={20} className="cursor-pointer" />
           </span>
         </div>
       </div>
@@ -108,7 +124,7 @@ export default function Navbar() {
 
       <div className="border-b border-gray-200 w-full" />
       {/* Bottom Row (desktop only) */}
-      <div className="hidden md:flex flex-col ml-20 mr-4 md:flex-row justify-between items-center px-6 py-2 border-gray-100 gap-3 md:gap-0">
+      <div className="hidden md:flex flex-col md:mt-1 ml-20 mr-1 md:flex-row justify-between items-center px-6 py-2 border-gray-100 gap-3 md:gap-0">
         {/* Left: Category Navigation */}
         <nav className="flex gap-10 flex-wrap text-black whitespace-nowrap">
           {["All", "Watches", "Jewellery", "Bags", "Shoes", "Accessories"].map(
@@ -129,7 +145,7 @@ export default function Navbar() {
           <input
             type="text"
             placeholder="Search..."
-            className="w-3/4 px-4 py-2 pl-10 border border-gray-300 text-sm focus:outline-none"
+            className="w-3/4 px-4 py-2 pl-10 border border-gray-200 text-sm focus:outline-none"
           />
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
             <Search size={18} />
